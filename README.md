@@ -1,2 +1,0 @@
-# Network_InfoSecurity_Repository
-信息安全管理与评估大赛的笔记，里面记载着刷题的笔记
