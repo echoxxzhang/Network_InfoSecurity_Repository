@@ -1,0 +1,182 @@
+!
+no service password-encryption
+!
+hostname DCWS-6028
+sysLocation China
+sysContact 400-810-9119
+!
+username admin privilege 15 password 0 admin
+!
+authentication line console login local
+!
+!
+!
+no logging flash
+!
+service dhcp
+!
+ip forward-protocol udp bootps
+!
+ip dhcp pool ap
+ network-address 172.16.30.0 255.255.255.192
+ default-router 172.16.30.1
+!
+ip dhcp pool vlan10
+ network-address 172.16.10.0 255.255.255.0
+ default-router 172.16.10.1
+!
+ip dhcp pool vlan20
+ network-address 172.16.20.0 255.255.255.128
+ default-router 172.16.20.1
+!
+!
+!
+!
+!
+!
+!
+!
+vlan 1;10;20;30;100;1002 
+!
+Interface Ethernet1/0/1
+ switchport mode trunk
+!
+Interface Ethernet1/0/2
+ switchport mode trunk
+ switchport trunk native vlan 30
+!
+Interface Ethernet1/0/3
+!
+Interface Ethernet1/0/4
+!
+Interface Ethernet1/0/5
+!
+Interface Ethernet1/0/6
+!
+Interface Ethernet1/0/7
+!
+Interface Ethernet1/0/8
+!
+Interface Ethernet1/0/9
+!
+Interface Ethernet1/0/10
+!
+Interface Ethernet1/0/11
+!
+Interface Ethernet1/0/12
+!
+Interface Ethernet1/0/13
+!
+Interface Ethernet1/0/14
+!
+Interface Ethernet1/0/15
+!
+Interface Ethernet1/0/16
+!
+Interface Ethernet1/0/17
+!
+Interface Ethernet1/0/18
+!
+Interface Ethernet1/0/19
+!
+Interface Ethernet1/0/20
+!
+Interface Ethernet1/0/21
+!
+Interface Ethernet1/0/22
+!
+Interface Ethernet1/0/23
+!
+Interface Ethernet1/0/24
+!
+Interface Ethernet1/0/25
+!
+Interface Ethernet1/0/26
+!
+Interface Ethernet1/0/27
+!
+Interface Ethernet1/0/28
+!
+interface Vlan100
+ ip address 192.168.100.254 255.255.255.0
+!
+interface Vlan1002
+ ip address 10.0.0.6 255.255.255.252
+!
+ip route 172.16.10.0/24 10.0.0.5
+ip route 172.16.20.0/25 10.0.0.5
+ip route 172.16.30.0/26 10.0.0.5
+!
+!
+no login
+wireless
+ no auto-ip-assign
+ enable
+ ap authentication none
+ static-ip  192.168.100.254
+ network 1
+  security mode wpa-personal
+  ssid 123
+  vlan 10 
+  wpa key encrypted 928336800ccca32a4c218d5e93108e70239a6a11664300a29598ec3b4771b69fd1711bcccd59d465b2309c18879c50347d786118e6d332a4b21b337c620dcc5c
+!
+ network 2
+  ssid 1234
+  vlan 20
+!
+ network 3
+!
+ network 4
+!
+ network 5
+!
+ network 6
+!
+ network 7
+!
+ network 8
+!
+ network 9
+!
+ network 10
+!
+ network 11
+!         
+ network 12
+!
+ network 13
+!
+ network 14
+!
+ network 15
+!
+ network 16
+!
+ ap load-balance template 1
+!
+ ap profile 1
+  name Default
+  hwtype 29
+  radio 1
+   dot11n channel-bandwidth 20
+   vap 0
+!
+   vap 1
+    enable
+!
+!
+  radio 2 
+   dot11n channel-bandwidth 40
+   vap 0
+!
+   vap 1
+    enable
+!
+!
+!
+ ap database 00-03-0f-7b-64-a0
+!
+!
+captive-portal
+!
+end
