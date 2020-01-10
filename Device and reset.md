@@ -26,6 +26,6 @@ hostname#reload
 
 系统>配置文件管理>备份恢复
 
-![image-20200106155852399](note.assets\image-20200106155852399.png)
+![image-20200106155852399](note.assets/image-20200106155852399.png)
 
 
