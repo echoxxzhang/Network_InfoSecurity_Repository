@@ -41,9 +41,11 @@ AP获取的ip为: 192.168.10.0/24
 (config)#wireless
 // 关闭自动选取功能
 (config-wireless)#no auto-ip-assign
+// 配置静态ac管理地址
+(config-wireless)#static-ip 192.168.10.254
 // 认证方式
-(config-wireless)#authentication none
-// 指定发现vlan，这里的vlan为管理vlan
+(config-wireless)#ap authentication none
+// 指定发现vlan，这里的vlan为管理vlan，可不配置
 (config-wireless)#discovery vlan-list 10
 // 开启无线功能
 (config-wireless)#enable
@@ -95,11 +97,12 @@ AP获取的ip为: 192.168.10.0/24
 
 一般帧中继会在DCRS上做，DHCP在DCWS上，用户获取ip过程为：AP>DCWS(ip找RS)>DCRS(找DHCP)>DCWS(给予ip)>DCRS(转发给AP)>DCWS(转发给AP)>AP
 
-#### DCSW
+#### DCWS
 
 ``` shell
-// 在DCSW上的dhcp配置使其
+// 在DCWS上的dhcp配置使其交给DCRS，记得要在通向DCRS的口配置trunk
 (config)#ip forward-protocol udp bootps
+(config)#ip route 0.0.0.0 0.0.0.0 192.168.200.253
 ```
 
 [](note.assets/两个无线/帧中继/AC.text )
@@ -108,6 +111,7 @@ AP获取的ip为: 192.168.10.0/24
 
 ``` shell
 // 在DCRS上配置
+(config)#ip forward-protocol udp bootps
 (config)#int vlan 10
 (config-if-vlan10)# ip helper-address 192.168.10.254
 ```
@@ -129,3 +133,15 @@ AP获取的ip为: 192.168.10.0/24
 [](note.assets/两个无线/模拟题/RS.text )
 
 注：此配置中交换机与无线控制器任务2中是有几道题目是错误的，所以参考无线的配置即可
+
+## AP静态地址的配置
+
+你可以通过DCWS telnet上AP，AP的初始化地址为192.168.1.10
+
+``` shell
+# 静态地址的设置
+DCN-WLAN-AP#set management static-ip 192.168.1.100 static-mask 255.555.255.0
+# 网关的设置
+DCN-WLAN-AP#set static-ip-route gateway 192.168.1.1
+```
+
