@@ -120,7 +120,11 @@ AP获取的ip为: 192.168.10.0/24
 
 ### 两个无线（非帧中继的模拟题）
 
-出现两个无线这种情况的话你将需要用到两个network，两个network都对应一个ap profile 1里面的radio1和radio2，切记要开启(enable)他们的vap1
+出现两个无线这种情况的话你将需要用到两个network
+
+* 在profile 1里面配置hwtype 29之后才能开启radio 2e
+* 两个network都对应一个ap profile 1里面的radio1和radio2
+* 切记要开启(enable)他们的vap1
 
 为了防止弄错下面贴上配置
 
@@ -133,15 +137,4 @@ AP获取的ip为: 192.168.10.0/24
 [](note.assets/两个无线/模拟题/RS.text )
 
 注：此配置中交换机与无线控制器任务2中是有几道题目是错误的，所以参考无线的配置即可
-
-## AP静态地址的配置
-
-你可以通过DCWS telnet上AP，AP的初始化地址为192.168.1.10
-
-``` shell
-# 静态地址的设置
-DCN-WLAN-AP#set management static-ip 192.168.1.100 static-mask 255.555.255.0
-# 网关的设置
-DCN-WLAN-AP#set static-ip-route gateway 192.168.1.1
-```
 
