@@ -4,6 +4,8 @@
 
 ## 基础
 
+下列大部分配置都来自题目的笔记
+
 ### 配置enable密码
 
 ``` shell
@@ -14,7 +16,7 @@
 
 ``` shell
 # 添加用户
-(config)#username abc privilege 15 password abc
+(config)#username abc privilege 15 password 0 abc
 ```
 
 ### 关闭WEB管理
@@ -35,6 +37,8 @@
 (config)#telnet-server enable
 ```
 
+## SNMP策略
+
 ### 开启SNMP功能，只读字符串为public，读写字符串为private，网管服务器连接在服务器区，ip地址为192.168.1.2
 
 ``` shell
@@ -44,9 +48,24 @@
 (config)#snmp-server securityip 192.168.1.2
 ```
 
+### 网管系统IP 为：172.16.100.21，读团体值为：DCN2019，版本为 V2C，交换机 DCRS Trap 信息实时上报网管
+
+``` shell
+# 开启服务
+(config)#snmp-server enable 
+(config)#snmp-server host 172.16.100.21 v2c DCN2019 
+(config)#snmp-server enable traps 
+(config)#snmp-server enable traps mac-notification 
+```
+
+### 当 MAC 地址发生变化时，也要立即通知网管发生的变化，每 35s 发送一次
+
+``` shell
+(config)#mac-address-table notification 
+(config)#mac-address-table notification interval 35 
+```
 
 
-下列大部分配置都来自题目的笔记
 
 ## 在e1/0/9口开启广播风暴控制，参数为400pps
 
@@ -55,14 +74,28 @@
 (config-if-ethernet1/0/9)#storm-control broadcast 400
 ```
 
+## 环路检测
 
-
-## 配置环路检测时间
-
-配置存在环路时的检测时间间隔为30秒，不存在环路时的检测时间间隔为10秒
+### 此处防止vlan200接口下的单端口环路，并配置存在环路时的检测时间间隔未30秒，不存在环路的检测时间为为10秒
 
 ``` shell
-hostname(config)# loopback-detection interval-time 30 10
+(config)#loopback-detection interval-time 30 10
+(config)#inter e1/0/10
+(config-if-Ethernet1/0/10)#loopback-detection specified-vlan 200
+(config-if-Ethernet1/0/10)#loopback-detection control shutdown
+```
+
+
+
+ ### 发现环路以后关闭端口时间为30分钟
+
+这里假设需要设置e1/0/10并绑定vlan40
+
+``` shell
+(config)#loopback-detection control-recovery timeout 1800
+(config)#inter e1/0/10
+(config-if-Ethernet1/0/10)#loopback-detection specified-vlan 40
+(config-if-Ethernet1/0/10)#loopback-detection control shutdown
 ```
 
 
@@ -95,7 +128,7 @@ hostname(config)# loopback-detection interval-time 30 10
 ```
 
 
-## 流量镜像
+## 流量镜像至NetLog
 将某个端口的双向流量镜像至NetLog进行监控和分析
 
 ``` shell
@@ -106,7 +139,7 @@ hostname(config)# loopback-detection interval-time 30 10
 (config)#monitor session 1 destination interface Ethernet 1/0/4
 ```
 
-## ARP
+## ARP策略
 
 ### 开启防ARP扫描功能
 
@@ -129,6 +162,17 @@ hostname(config)# loopback-detection interval-time 30 10
 (config-if-port-range)#arp-guard ip 192.168.30.126
 (config-if-port-range)#no shut
 ```
+
+### 开启功能防止vlan40下ARP欺骗攻击
+
+``` shell
+# 开启dhcp snooping binding服务
+(config)#ip dhcp snooping binding enable
+(config)#inter e1/0/10
+(config-if-ethernet1/0/10)#ip dhcp snooping binding user-control
+```
+
+
 
 ### 在e1/0/11上配置指定mac1不能访问指定mac2
 
@@ -154,7 +198,9 @@ hostname(config)# loopback-detection interval-time 30 10
 (config-if-vlan30)#ip arp dynamic maximun 50
 ```
 
-## 指定vlan开启ip dhcp snooping并在接口下绑定用户
+## DHCP策略
+
+### 指定vlan开启ip dhcp snooping并在接口下绑定用户
 
 这里假设绑定vlan40
 
@@ -169,17 +215,34 @@ hostname(config)# loopback-detection interval-time 30 10
 (config-if-Ethernet1/0/2)#ip dhcp snooping binding user-control
 ```
 
+### 在交换机上配置DHCP server helper
 
-
-## 环路检测
-
-此处防止vlan200接口下的单端口环路，并配置存在环路时的检测时间间隔未30秒，不存在环路的检测时间为为10秒
+配置交换机使VLAN110用户可以通过DHCP方式获得ip，地址池为pool-vlan110，dns为114.114.114.114和8.8.8.8，租期为2天，vlan110最后的20个地址不被动态分配出去
 
 ``` shell
-(config)#loopback-detection interval-time 30 10
+(config)#server dhcp
+(config)#ip dhcp pool pool-vlan110
+(dhcp-pool-vlan110-config)#network-address 192.168.110.0 255.255.255.0
+(dhcp-pool-vlan110-config)#default-router 192.168.1.254
+(dhcp-pool-vlan110-config)#dns-server 114.114.114.114 8.8.8.8
+(dhcp-pool-vlan110-config)#lease 2
+(dhcp-pool-vlan110-config)#q
+(config)#ip dhcp excluded-address 192.168.234 192.168.110.254
+```
+
+### 检测指定vlan私设DHCP服务器则关闭端口
+
+这里绑定在e1/0/10端口，并指定e1/0/4为信任端口
+
+``` shell
+# 开启dhcp snooping服务
+(config)#ip dhcp snooping enabel
 (config)#inter e1/0/10
-(config-if-Ethernet1/0/10)#loopback-detection specified-vlan 200
-(config-if-Ethernet1/0/10)#loopback-detection control shutdown
+# 绑定动作为shutdown端口
+(config-if-ethernet1/0/10)#ip dhcp snooping action shutdown
+# 进入4端口并设置为信任端口
+(config-if-ethernet1/0/10)#inter e1/0/4
+(config-if-ethernet1/0/4)#ip dhcp snooping trust
 ```
 
 
@@ -231,22 +294,7 @@ vlan3的ip段为192.168.100.0
 (config-if-Ethernet)#ip access-group work in
 ```
 
-## 在交换机上配置DHCP server helper
-
-配置交换机使VLAN110用户可以通过DHCP方式获得ip，地址池为pool-vlan110，dns为114.114.114.114和8.8.8.8，租期为2天，vlan110最后的20个地址不被动态分配出去
-
-``` shell
-(config)#server dhcp
-(config)#ip dhcp pool pool-vlan110
-(dhcp-pool-vlan110-config)#network-address 192.168.110.0 255.255.255.0
-(dhcp-pool-vlan110-config)#default-router 192.168.1.254
-(dhcp-pool-vlan110-config)#dns-server 114.114.114.114 8.8.8.8
-(dhcp-pool-vlan110-config)#lease 2
-(dhcp-pool-vlan110-config)#q
-(config)#ip dhcp excluded-address 192.168.234 192.168.110.254
-```
-
-# 大概题型
+# 大致题型
 
 | 类型    | 具体题目                                         | 难度 |
 | ------- | ------------------------------------------------ | ---- |
@@ -265,4 +313,20 @@ vlan3的ip段为192.168.100.0
 | 重定向  | 重定向指定之间内访问                             | --   |
 | snmp    | snmp的服务器的配置                               | -    |
 | STP     | MSTP的配置                                       | --   |
+
+# 罕见题型
+
+2017 年勒索蠕虫病毒席卷全球，爆发了堪称史上最大规模的网络攻击，通过对总部核心交换机 DCRS 所有业务 VLAN 下配置访问控制策略实现双向安全防护
+
+``` shell
+(config)#ip access-list extended name
+DCRS(config-ip-ext-nacl-name)#deny tcp any-source any-destination d-port 135
+(config-ip-ext-nacl-name)#deny tcp any-source any-destination d-port 137
+(config-ip-ext-nacl-name)#deny tcp any-source any-destination d-port 138
+(config-ip-ext-nacl-name)#deny tcp any-source any-destination d-port 139
+(config-ip-ext-nacl-name)#deny tcp any-source any-destination d-port 445
+(config-ip-ext-nacl-name)#permit ip any-source any-destination
+(config)#vacl ip access-group name in vlan 10,20,30,40
+(config)#vacl ip access-group name out vlan 10,20,30,4
+```
 
