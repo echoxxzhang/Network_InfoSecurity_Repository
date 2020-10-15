@@ -130,11 +130,11 @@ AP获取的ip为: 192.168.10.0/24
 
 #### DCWS
 
-[](note.assets/两个无线/模拟题/AC.text )
+[点我查看](note.assets/两个无线/模拟题/AC.text )
 
 #### DCRS
 
-[](note.assets/两个无线/模拟题/RS.text )
+[点我查看](note.assets/两个无线/模拟题/RS.text )
 
 注：此配置中交换机与无线控制器任务2中是有几道题目是错误的，所以参考无线的配置即可
 
