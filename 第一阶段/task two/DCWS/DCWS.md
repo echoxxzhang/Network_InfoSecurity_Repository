@@ -2,7 +2,7 @@
 
 这里主要说明DCWS的一些安全设置与DHCP的其他设置
 
-如果需要看DHCP的设置请点**[这里](./DHCP_config_note.md)**
+如果需要看DHCP的设置请点**[这里](../other/DHCP_config_note.md)**
 
 ## AP静态地址的配置
 
