@@ -1,0 +1,196 @@
+!
+no service password-encryption
+!
+hostname DCWS
+sysLocation China
+sysContact 400-810-9119
+!
+username admin privilege 15 password 0 admin
+!
+authentication line console login local
+!
+!
+!
+no logging flash
+!
+service dhcp
+!
+ip dhcp pool vlan110
+ network-address 192.168.110.0 255.255.255.0
+ default-router 192.168.110.254
+!
+ip dhcp pool vlan111
+ network-address 192.168.111.0 255.255.255.0
+ lease 2 0 0 
+ default-router 192.168.111.254
+ dns-server 8.8.8.8
+!
+ip dhcp pool vlan222
+ network-address 192.168.222.0 255.255.255.0
+ lease 2 0 0 
+ default-router 192.168.222.254
+ dns-server 8.8.8.8
+!
+!
+!
+!
+!
+!
+!
+!
+vlan 1-2;10;20;30;66;110-111;222 
+!
+Interface Ethernet1/0/1
+!
+Interface Ethernet1/0/2
+!
+Interface Ethernet1/0/3
+!         
+Interface Ethernet1/0/4
+!
+Interface Ethernet1/0/5
+!
+Interface Ethernet1/0/6
+!
+Interface Ethernet1/0/7
+!
+Interface Ethernet1/0/8
+!
+Interface Ethernet1/0/9
+!
+Interface Ethernet1/0/10
+!
+Interface Ethernet1/0/11
+!
+Interface Ethernet1/0/12
+!
+Interface Ethernet1/0/13
+!
+Interface Ethernet1/0/14
+!
+Interface Ethernet1/0/15
+ switchport mode trunk
+ switchport trunk native vlan 110
+!
+Interface Ethernet1/0/16
+ switchport mode trunk
+!
+Interface Ethernet1/0/17
+!
+Interface Ethernet1/0/18
+!
+Interface Ethernet1/0/19
+!
+Interface Ethernet1/0/20
+!
+Interface Ethernet1/0/21
+!
+Interface Ethernet1/0/22
+!
+Interface Ethernet1/0/23
+!
+Interface Ethernet1/0/24
+!
+Interface Ethernet1/0/25
+!
+Interface Ethernet1/0/26
+!
+Interface Ethernet1/0/27
+!
+Interface Ethernet1/0/28
+!
+interface Vlan66
+ ip address 192.168.66.253 255.255.255.0
+!
+interface Vlan110
+ ip address 192.168.110.254 255.255.255.0
+!
+interface Vlan111
+ ip address 192.168.111.254 255.255.255.0
+!
+interface Vlan222
+ ip address 192.168.222.254 255.255.255.0
+!
+ip route 0.0.0.0/0 192.168.66.254
+!
+!
+no login
+wireless
+ no auto-ip-assign
+ enable   
+ ap authentication none
+ mac-authentication-mode black-list
+ static-ip  192.168.110.254
+ known-client 68-a3-c4-e6-a1-be action deny
+ network 1
+  client-qos enable
+  client-qos bandwidth-limit down 2048
+  client-qos bandwidth-limit up 1024
+  security mode wpa-personal
+  ssid GUEST1
+  vlan 111
+  wpa key encrypted d5251bf7175eeb85a37c930574da4d16b414fa21a510645893e4c242eaa514251e105adbe6721e8f7aee1ee77af07d508d6f3e4add2602b45fd24b4365d6e1e8
+!
+ network 2
+  hide-ssid
+  ssid GUEST2
+  vlan 222
+!
+ network 3
+!
+ network 4
+!
+ network 5
+!         
+ network 6
+!
+ network 7
+!
+ network 8
+!
+ network 9
+!
+ network 10
+!
+ network 11
+!
+ network 12
+!
+ network 13
+!
+ network 14
+!
+ network 15
+!
+ network 16
+!
+ ap load-balance template 1
+!         
+ ap profile 1
+  name Default
+  hwtype 29
+  ap escape
+  radio 1
+   mode g
+   dot11n channel-bandwidth 20
+   vap 0
+!
+   vap 1
+    enable
+!
+!
+  radio 2
+   dot11n channel-bandwidth 40
+   vap 0
+!
+   vap 1
+    enable
+!
+!
+!
+ ap database 00-03-0f-7b-64-a0
+!
+!
+captive-portal
+!
+end
